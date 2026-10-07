@@ -1,6 +1,6 @@
 /**
  * NetVisual Pro - Main Application Controller
- * Handles navigation, search, modal rendering, daily spotlight, and state
+ * Handles navigation, search, modal rendering, daily spotlight, and beginner context
  */
 
 const App = {
@@ -59,7 +59,7 @@ const App = {
   },
 
   /**
-   * Render Today's Concept Spotlight & Daily Quiz
+   * Render Today's Concept Spotlight & Daily Quiz with Beginner-Friendly Expanders
    */
   renderDailySpotlight: function() {
     const targetDate = new Date();
@@ -76,6 +76,7 @@ const App = {
     }
 
     const badgeClass = daily.track === "CCNA" ? "badge-ccna" : "badge-encor";
+    const ctx = daily.deepContext || {};
 
     container.innerHTML = `
       <div class="relative overflow-hidden rounded-2xl glass-panel-elevated p-6 lg:p-8 border border-sky-500/20 shadow-2xl">
@@ -113,6 +114,37 @@ const App = {
               ${daily.summary}
             </p>
 
+            <!-- Interactive Action Bar: Deep Context & Beginner Guidance -->
+            <div class="flex flex-wrap items-center gap-3 py-1">
+              <button id="daily-toggle-analogy-btn" class="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-semibold text-xs shadow-md transition flex items-center gap-2">
+                <span>💡</span> 
+                <span id="daily-toggle-analogy-text">Explain Like I'm New (Analogy)</span>
+                <span id="daily-toggle-icon">▼</span>
+              </button>
+
+              <button id="daily-open-context-modal-btn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 hover:text-white font-semibold text-xs border border-sky-800/60 transition flex items-center gap-2">
+                <span>📖</span> Full Context & Jargon Decoder Studio ➔
+              </button>
+            </div>
+
+            <!-- Inline Expandable Beginner Context Drawer -->
+            <div id="daily-inline-analogy-drawer" class="hidden rounded-xl bg-slate-950/90 border border-sky-500/30 p-5 space-y-3 transition-all">
+              <div class="flex items-center gap-2 text-sky-300 font-bold text-sm">
+                <span>🌱</span>
+                <h4>${ctx.analogyTitle || "Beginner Mental Model"}</h4>
+              </div>
+              <p class="text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-line">
+                ${ctx.analogy || ctx.whatIsIt}
+              </p>
+              
+              <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
+                <span class="text-slate-400">💡 <strong>Why We Need It:</strong> ${ctx.whyDoWeNeedIt ? ctx.whyDoWeNeedIt.substring(0, 110) + '...' : ''}</span>
+                <button id="drawer-deep-dive-btn" class="text-sky-400 hover:text-sky-300 font-semibold underline whitespace-nowrap ml-2">
+                  Read Full Walkthrough ➔
+                </button>
+              </div>
+            </div>
+
             <div class="p-4 rounded-xl bg-sky-950/40 border border-sky-500/30 flex items-start gap-3">
               <span class="text-xl">💡</span>
               <div>
@@ -143,7 +175,9 @@ const App = {
               <div class="svg-diagram-wrapper p-2 shadow-lg">
                 <div class="text-[11px] text-slate-400 px-2 py-1 flex items-center justify-between border-b border-slate-800/80 mb-1">
                   <span>📐 Architectural Vector Blueprint</span>
-                  <span class="text-sky-400 text-[10px] font-mono">SCALABLE SVG</span>
+                  <button id="zoom-diagram-btn" class="text-sky-400 hover:text-sky-300 text-[10px] font-mono flex items-center gap-1">
+                    🔍 ZOOM IN
+                  </button>
                 </div>
                 ${diagramSvg}
               </div>
@@ -184,6 +218,31 @@ const App = {
       this.renderDailySpotlight();
     });
 
+    // Toggle Inline Analogy Drawer
+    const analogyBtn = document.getElementById("daily-toggle-analogy-btn");
+    const analogyDrawer = document.getElementById("daily-inline-analogy-drawer");
+    const toggleIcon = document.getElementById("toggle-icon");
+    analogyBtn?.addEventListener("click", () => {
+      if (analogyDrawer.classList.contains("hidden")) {
+        analogyDrawer.classList.remove("hidden");
+        document.getElementById("daily-toggle-icon").textContent = "▲";
+      } else {
+        analogyDrawer.classList.add("hidden");
+        document.getElementById("daily-toggle-icon").textContent = "▼";
+      }
+    });
+
+    // Open Full Context Modal Buttons
+    document.getElementById("daily-open-context-modal-btn")?.addEventListener("click", () => {
+      this.openDailyContextModal(daily);
+    });
+    document.getElementById("drawer-deep-dive-btn")?.addEventListener("click", () => {
+      this.openDailyContextModal(daily);
+    });
+    document.getElementById("zoom-diagram-btn")?.addEventListener("click", () => {
+      this.openDailyContextModal(daily);
+    });
+
     // Bind Quiz Option Clicks
     const quizButtons = container.querySelectorAll(".daily-quiz-btn");
     const resultBox = document.getElementById("daily-quiz-result");
@@ -211,6 +270,164 @@ const App = {
         }
       });
     });
+  },
+
+  /**
+   * Open Dedicated Daily Context & Beginner Breakdown Studio Modal
+   */
+  openDailyContextModal: function(daily) {
+    const modal = document.getElementById("topic-modal");
+    const content = document.getElementById("topic-modal-content");
+    if (!modal || !content) return;
+
+    const ctx = daily.deepContext || {};
+    let diagramSvg = "";
+    if (daily.diagramType && NetworkDiagrams[daily.diagramType]) {
+      diagramSvg = NetworkDiagrams[daily.diagramType]();
+    }
+
+    const badgeClass = daily.track === "CCNA" ? "badge-ccna" : "badge-encor";
+
+    content.innerHTML = `
+      <div class="p-6 sm:p-8 modal-enter space-y-6">
+        <!-- Header -->
+        <div class="flex items-start justify-between gap-4 pb-4 border-b border-slate-800">
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="px-3 py-0.5 rounded-full text-xs font-semibold ${badgeClass}">
+                ${daily.track} • ${daily.domain}
+              </span>
+              <span class="text-xs text-sky-400 font-mono">📅 ${daily.currentDate}</span>
+              <span class="text-xs bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded border border-emerald-800">
+                Beginner-Accessible Guide
+              </span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+              ${daily.title}
+            </h1>
+            <p class="text-sm sm:text-base text-slate-300 mt-1">
+              ${daily.summary}
+            </p>
+          </div>
+          <button id="modal-close-btn" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-base">
+            ✕
+          </button>
+        </div>
+
+        <!-- Section 1: The Real-World Analogy (No Prior Experience Required) -->
+        <div class="p-5 rounded-xl bg-gradient-to-br from-slate-900 to-slate-950 border border-sky-500/30 shadow-lg">
+          <div class="flex items-center gap-2 text-sky-400 font-bold text-base mb-3">
+            <span class="text-xl">💡</span>
+            <h3>${ctx.analogyTitle || "The Real-World Analogy"}</h3>
+          </div>
+          <div class="text-xs sm:text-sm text-slate-200 leading-relaxed space-y-2 whitespace-pre-line bg-slate-950/60 p-4 rounded-lg border border-slate-800/80">
+            ${ctx.analogy || "A clear mental model to understand this concept."}
+          </div>
+        </div>
+
+        <!-- Section 2: First-Principles Breakdown -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+            <h4 class="text-xs uppercase tracking-wider font-bold text-sky-400 mb-2 flex items-center gap-1.5">
+              <span>🎯</span> What Is It (In Simple Words)?
+            </h4>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              ${ctx.whatIsIt || daily.summary}
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+            <h4 class="text-xs uppercase tracking-wider font-bold text-emerald-400 mb-2 flex items-center gap-1.5">
+              <span>❓</span> Why Was It Invented?
+            </h4>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              ${ctx.whyDoWeNeedIt || "Solves scalability and isolation challenges in network designs."}
+            </p>
+          </div>
+        </div>
+
+        <!-- Scalable Diagram Section -->
+        ${diagramSvg ? `
+          <div class="svg-diagram-wrapper shadow-2xl p-3 border border-slate-800">
+            <div class="flex items-center justify-between text-xs text-slate-400 px-2 py-1 border-b border-slate-800 mb-2">
+              <span class="font-bold text-sky-400">📐 High-Resolution Architectural Blueprint</span>
+              <span class="text-[10px] font-mono text-slate-500">VECTOR SVG</span>
+            </div>
+            ${diagramSvg}
+          </div>
+        ` : ''}
+
+        <!-- Section 3: Step-by-Step Under The Hood -->
+        ${ctx.howItWorksStepByStep ? `
+          <div class="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
+            <h4 class="text-xs uppercase tracking-wider font-bold text-amber-400 flex items-center gap-1.5">
+              <span>⚙️</span> How It Works Under The Hood (Step-by-Step)
+            </h4>
+            <div class="space-y-2 text-xs sm:text-sm text-slate-300">
+              ${ctx.howItWorksStepByStep.map(step => `
+                <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80 flex items-start gap-2.5">
+                  <span class="text-sky-400 font-bold">➜</span>
+                  <span>${step}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Section 4: Jargon Decoder / Glossary -->
+        ${ctx.jargonGlossary ? `
+          <div class="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
+            <h4 class="text-xs uppercase tracking-wider font-bold text-purple-400 flex items-center gap-1.5">
+              <span>📖</span> Network Jargon Decoded (For Beginners)
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              ${ctx.jargonGlossary.map(j => `
+                <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                  <strong class="text-sky-300 font-semibold block mb-1 font-mono">${j.term}</strong>
+                  <p class="text-slate-400 leading-relaxed">${j.def}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Section 5: What Breaks If Misconfigured? -->
+        <div class="p-4 rounded-xl bg-red-950/30 border border-red-500/30 text-xs sm:text-sm">
+          <h4 class="text-red-400 font-bold uppercase tracking-wider text-xs mb-1.5 flex items-center gap-1.5">
+            <span>⚠️</span> Real-World Impact: What Happens If Misconfigured?
+          </h4>
+          <p class="text-slate-200 leading-relaxed">
+            ${ctx.whatHappensIfWrong || "Misconfiguration leads to packet loss, broadcast loops, or degraded latency."}
+          </p>
+        </div>
+
+        <!-- Section 6: Cisco Command & Verification Output -->
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs uppercase tracking-wider font-bold text-sky-400 font-mono">
+              💻 Cisco IOS Console Verification:
+            </span>
+            <span class="text-[11px] font-mono text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">
+              ${daily.commandOfDay.command}
+            </span>
+          </div>
+          <pre class="cisco-terminal p-3 rounded text-[11px] text-slate-300 overflow-x-auto"><code>${daily.commandOfDay.sampleOutput}</code></pre>
+        </div>
+
+        <!-- Bottom Close Button -->
+        <div class="pt-4 border-t border-slate-800 flex justify-end">
+          <button id="modal-done-btn" class="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs transition">
+            Close Deep-Dive Studio
+          </button>
+        </div>
+      </div>
+    `;
+
+    modal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+
+    // Bind Close Buttons
+    document.getElementById("modal-close-btn")?.addEventListener("click", () => this.closeModal());
+    document.getElementById("modal-done-btn")?.addEventListener("click", () => this.closeModal());
   },
 
   /**
@@ -341,7 +558,6 @@ const App = {
   attachCardListeners: function(container) {
     container.querySelectorAll(".glass-card").forEach(card => {
       card.addEventListener("click", (e) => {
-        // Ignore if bookmark button clicked
         if (e.target.closest(".bookmark-btn")) return;
         const topicId = card.getAttribute("data-topic-id");
         this.openTopicModal(topicId);
