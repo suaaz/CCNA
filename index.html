@@ -80,9 +80,9 @@
         </div>
       </div>
 
-      <!-- Navigation Links -->
-      <nav class="flex items-center gap-1 sm:gap-3 text-xs font-medium">
-        <a href="#daily-section" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition hidden sm:inline-block">
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden md:flex items-center gap-1 sm:gap-2 lg:gap-3 text-xs font-medium">
+        <a href="#daily-section" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">
           Daily Concept
         </a>
         <a href="#ccna-section" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">
@@ -91,7 +91,7 @@
         <a href="#encor-section" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">
           ENCOR
         </a>
-        <a href="#interactive-labs" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition hidden lg:inline-block">
+        <a href="#interactive-labs" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">
           Labs
         </a>
         <a href="#about-section" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">
@@ -108,6 +108,63 @@
           <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
             <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
           </svg>
+        </a>
+      </nav>
+
+      <!-- Mobile Right Controls (Bookmarks & Hamburger Menu) -->
+      <div class="flex items-center gap-2 md:hidden">
+        <span class="flex items-center gap-1 text-[11px] bg-slate-900 px-2 py-1 rounded-md border border-slate-800 text-amber-300">
+          ⭐ <span id="mobile-bookmark-count-badge">0</span>
+        </span>
+        <button id="mobile-menu-toggle-btn" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white focus:outline-none" aria-label="Toggle Navigation Menu">
+          <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          <svg id="close-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Menu -->
+    <div id="mobile-drawer" class="hidden md:hidden border-t border-slate-800 bg-slate-950/95 backdrop-blur-xl px-4 py-4 space-y-3 mobile-drawer-enter">
+      <!-- Mobile Search Bar -->
+      <div class="relative w-full">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">🔍</span>
+        <input 
+          type="text" 
+          id="mobile-search-input" 
+          placeholder="Search topics (e.g. OSPF, BGP, VLANs)..." 
+          class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-sky-500"
+        >
+      </div>
+
+      <!-- Mobile Nav Links -->
+      <nav class="flex flex-col space-y-1 text-sm font-medium pt-1">
+        <a href="#daily-section" class="mobile-nav-link px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-900 transition flex items-center justify-between">
+          <span>✨ Today's Concept Spotlight</span>
+          <span class="text-xs text-sky-400 font-mono">Daily</span>
+        </a>
+        <a href="#ccna-section" class="mobile-nav-link px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-900 transition flex items-center justify-between">
+          <span>📡 CCNA (200-301) Blueprint</span>
+          <span class="text-xs text-slate-500">Associate</span>
+        </a>
+        <a href="#encor-section" class="mobile-nav-link px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-900 transition flex items-center justify-between">
+          <span>🏢 ENCOR (350-401) Enterprise</span>
+          <span class="text-xs text-purple-400">Core</span>
+        </a>
+        <a href="#interactive-labs" class="mobile-nav-link px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-900 transition flex items-center justify-between">
+          <span>🔬 Interactive Labs & Simulators</span>
+          <span class="text-xs text-emerald-400">Hands-on</span>
+        </a>
+        <a href="#about-section" class="mobile-nav-link px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-900 transition flex items-center justify-between">
+          <span>👨‍💻 About Abdul-Azeez</span>
+          <span class="text-xs text-slate-500">Portfolio</span>
+        </a>
+        <a href="https://suaaz.github.io/Cloud/" target="_blank" class="mobile-nav-link px-3 py-2 rounded-lg text-sky-400 bg-sky-950/40 border border-sky-800/40 hover:bg-sky-900/40 transition flex items-center justify-between">
+          <span>☁️ Visit Sister Site: CloudArchitect</span>
+          <span class="text-xs">↗</span>
         </a>
       </nav>
     </div>
@@ -191,23 +248,23 @@
         </div>
 
         <!-- Domain Filters -->
-        <div class="flex flex-wrap items-center gap-1.5 text-xs">
-          <button onclick="App.filterCcnaDomain('all')" class="ccna-filter-btn px-3 py-1.5 rounded-lg bg-sky-600 text-white font-semibold transition" data-domain="all">
+        <div class="flex items-center gap-1.5 text-xs overflow-x-auto no-scrollbar touch-scroll pb-1 sm:pb-0 sm:flex-wrap w-full sm:w-auto -mx-1 px-1">
+          <button onclick="App.filterCcnaDomain('all')" class="ccna-filter-btn px-3 py-1.5 rounded-lg bg-sky-600 text-white font-semibold whitespace-nowrap flex-shrink-0 transition" data-domain="all">
             All
           </button>
-          <button onclick="App.filterCcnaDomain('Network Fundamentals')" class="ccna-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition" data-domain="Network Fundamentals">
+          <button onclick="App.filterCcnaDomain('Network Fundamentals')" class="ccna-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 whitespace-nowrap flex-shrink-0 transition" data-domain="Network Fundamentals">
             Fundamentals
           </button>
-          <button onclick="App.filterCcnaDomain('Network Access')" class="ccna-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition" data-domain="Network Access">
+          <button onclick="App.filterCcnaDomain('Network Access')" class="ccna-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 whitespace-nowrap flex-shrink-0 transition" data-domain="Network Access">
             Access / VLANs
           </button>
-          <button onclick="App.filterCcnaDomain('IP Connectivity')" class="ccna-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition" data-domain="IP Connectivity">
+          <button onclick="App.filterCcnaDomain('IP Connectivity')" class="ccna-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 whitespace-nowrap flex-shrink-0 transition" data-domain="IP Connectivity">
             Routing / OSPF
           </button>
-          <button onclick="App.filterCcnaDomain('IP Services')" class="ccna-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition" data-domain="IP Services">
+          <button onclick="App.filterCcnaDomain('IP Services')" class="ccna-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 whitespace-nowrap flex-shrink-0 transition" data-domain="IP Services">
             NAT / Services
           </button>
-          <button onclick="App.filterCcnaDomain('Security Fundamentals')" class="ccna-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition" data-domain="Security Fundamentals">
+          <button onclick="App.filterCcnaDomain('Security Fundamentals')" class="ccna-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 whitespace-nowrap flex-shrink-0 transition" data-domain="Security Fundamentals">
             Security / ACLs
           </button>
         </div>
@@ -229,20 +286,20 @@
         </div>
 
         <!-- Domain Filters -->
-        <div class="flex flex-wrap items-center gap-1.5 text-xs">
-          <button onclick="App.filterEncorDomain('all')" class="encor-filter-btn px-3 py-1.5 rounded-lg bg-purple-600 text-white font-semibold transition" data-domain="all">
+        <div class="flex items-center gap-1.5 text-xs overflow-x-auto no-scrollbar touch-scroll pb-1 sm:pb-0 sm:flex-wrap w-full sm:w-auto -mx-1 px-1">
+          <button onclick="App.filterEncorDomain('all')" class="encor-filter-btn px-3 py-1.5 rounded-lg bg-purple-600 text-white font-semibold whitespace-nowrap flex-shrink-0 transition" data-domain="all">
             All
           </button>
-          <button onclick="App.filterEncorDomain('Architecture')" class="encor-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition" data-domain="Architecture">
+          <button onclick="App.filterEncorDomain('Architecture')" class="encor-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 whitespace-nowrap flex-shrink-0 transition" data-domain="Architecture">
             Architecture
           </button>
-          <button onclick="App.filterEncorDomain('Infrastructure')" class="encor-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition" data-domain="Infrastructure">
+          <button onclick="App.filterEncorDomain('Infrastructure')" class="encor-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 whitespace-nowrap flex-shrink-0 transition" data-domain="Infrastructure">
             BGP / SD-WAN
           </button>
-          <button onclick="App.filterEncorDomain('Virtualization')" class="encor-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition" data-domain="Virtualization">
+          <button onclick="App.filterEncorDomain('Virtualization')" class="encor-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 whitespace-nowrap flex-shrink-0 transition" data-domain="Virtualization">
             VXLAN / Fabric
           </button>
-          <button onclick="App.filterEncorDomain('Automation')" class="encor-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition" data-domain="Automation">
+          <button onclick="App.filterEncorDomain('Automation')" class="encor-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 whitespace-nowrap flex-shrink-0 transition" data-domain="Automation">
             Automation / YANG
           </button>
         </div>

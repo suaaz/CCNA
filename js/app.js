@@ -31,15 +31,51 @@ const App = {
   setupEventListeners: function() {
     // Search input
     const searchInput = document.getElementById("global-search-input");
-    searchInput?.addEventListener("input", (e) => {
-      this.searchQuery = e.target.value.trim().toLowerCase();
+    const mobileSearchInput = document.getElementById("mobile-search-input");
+
+    const handleSearch = (val) => {
+      this.searchQuery = val.trim().toLowerCase();
+      if (searchInput && searchInput.value !== val) searchInput.value = val;
+      if (mobileSearchInput && mobileSearchInput.value !== val) mobileSearchInput.value = val;
       this.renderCcnaTopics();
       this.renderEncorTopics();
+    };
+
+    searchInput?.addEventListener("input", (e) => handleSearch(e.target.value));
+    mobileSearchInput?.addEventListener("input", (e) => handleSearch(e.target.value));
+
+    // Mobile Drawer Toggle
+    const mobileBtn = document.getElementById("mobile-menu-toggle-btn");
+    const mobileDrawer = document.getElementById("mobile-drawer");
+    const hamburgerIcon = document.getElementById("hamburger-icon");
+    const closeIcon = document.getElementById("close-icon");
+
+    mobileBtn?.addEventListener("click", () => {
+      const isHidden = mobileDrawer.classList.contains("hidden");
+      if (isHidden) {
+        mobileDrawer.classList.remove("hidden");
+        hamburgerIcon.classList.add("hidden");
+        closeIcon.classList.remove("hidden");
+        mobileSearchInput?.focus();
+      } else {
+        mobileDrawer.classList.add("hidden");
+        hamburgerIcon.classList.remove("hidden");
+        closeIcon.classList.add("hidden");
+      }
+    });
+
+    // Close mobile drawer when clicking any nav link
+    document.querySelectorAll(".mobile-nav-link").forEach(link => {
+      link.addEventListener("click", () => {
+        mobileDrawer?.classList.add("hidden");
+        hamburgerIcon?.classList.remove("hidden");
+        closeIcon?.classList.add("hidden");
+      });
     });
 
     // Keyboard shortcut: '/' or 'Ctrl+K' focuses search
     window.addEventListener("keydown", (e) => {
-      if ((e.key === "/" && document.activeElement !== searchInput) || 
+      if ((e.key === "/" && document.activeElement !== searchInput && document.activeElement !== mobileSearchInput) || 
           (e.ctrlKey && e.key === "k") || 
           (e.metaKey && e.key === "k")) {
         e.preventDefault();
@@ -115,20 +151,20 @@ const App = {
             </p>
 
             <!-- Interactive Action Bar: Deep Context & Beginner Guidance -->
-            <div class="flex flex-wrap items-center gap-3 py-1">
-              <button id="daily-toggle-analogy-btn" class="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-semibold text-xs shadow-md transition flex items-center gap-2">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 py-1">
+              <button id="daily-toggle-analogy-btn" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-semibold text-xs shadow-md transition flex items-center justify-center gap-2">
                 <span>💡</span> 
                 <span id="daily-toggle-analogy-text">Explain Like I'm New (Analogy)</span>
                 <span id="daily-toggle-icon">▼</span>
               </button>
 
-              <button id="daily-open-context-modal-btn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 hover:text-white font-semibold text-xs border border-sky-800/60 transition flex items-center gap-2">
+              <button id="daily-open-context-modal-btn" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 hover:text-white font-semibold text-xs border border-sky-800/60 transition flex items-center justify-center gap-2 text-center">
                 <span>📖</span> Full Context & Jargon Decoder Studio ➔
               </button>
             </div>
 
             <!-- Inline Expandable Beginner Context Drawer -->
-            <div id="daily-inline-analogy-drawer" class="hidden rounded-xl bg-slate-950/90 border border-sky-500/30 p-5 space-y-3 transition-all">
+            <div id="daily-inline-analogy-drawer" class="hidden rounded-xl bg-slate-950/90 border border-sky-500/30 p-4 sm:p-5 space-y-3 transition-all">
               <div class="flex items-center gap-2 text-sky-300 font-bold text-sm">
                 <span>🌱</span>
                 <h4>${ctx.analogyTitle || "Beginner Mental Model"}</h4>
@@ -137,9 +173,9 @@ const App = {
                 ${ctx.analogy || ctx.whatIsIt}
               </p>
               
-              <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
+              <div class="pt-2 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-2">
                 <span class="text-slate-400">💡 <strong>Why We Need It:</strong> ${ctx.whyDoWeNeedIt ? ctx.whyDoWeNeedIt.substring(0, 110) + '...' : ''}</span>
-                <button id="drawer-deep-dive-btn" class="text-sky-400 hover:text-sky-300 font-semibold underline whitespace-nowrap ml-2">
+                <button id="drawer-deep-dive-btn" class="text-sky-400 hover:text-sky-300 font-semibold underline whitespace-nowrap self-start sm:self-auto sm:ml-2">
                   Read Full Walkthrough ➔
                 </button>
               </div>
@@ -289,7 +325,7 @@ const App = {
     const badgeClass = daily.track === "CCNA" ? "badge-ccna" : "badge-encor";
 
     content.innerHTML = `
-      <div class="p-6 sm:p-8 modal-enter space-y-6">
+      <div class="p-4 sm:p-6 md:p-8 modal-enter space-y-6">
         <!-- Header -->
         <div class="flex items-start justify-between gap-4 pb-4 border-b border-slate-800">
           <div>
@@ -593,7 +629,9 @@ const App = {
    */
   updateBookmarkCount: function() {
     const el = document.getElementById("bookmark-count-badge");
+    const mobileEl = document.getElementById("mobile-bookmark-count-badge");
     if (el) el.textContent = this.bookmarks.length;
+    if (mobileEl) mobileEl.textContent = this.bookmarks.length;
   },
 
   /**
@@ -626,7 +664,7 @@ const App = {
     const isBookmarked = this.bookmarks.includes(topic.id);
 
     content.innerHTML = `
-      <div class="p-6 sm:p-8 modal-enter">
+      <div class="p-4 sm:p-6 md:p-8 modal-enter">
         <div class="flex items-start justify-between gap-4 mb-4 pb-4 border-b border-slate-800">
           <div>
             <div class="flex items-center gap-2 mb-2">
